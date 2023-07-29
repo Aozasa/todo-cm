@@ -11,3 +11,14 @@ export const createSessionTemplate = (
     },
   };
 };
+
+export const refreshTokenSessionTemplate = (
+  authenticationResult: CognitoIdentityServiceProvider.AuthenticationResultType
+) => {
+  return {
+    status: 200,
+    session: {
+      token: authenticationResult.IdToken,
+    },
+  };
+};

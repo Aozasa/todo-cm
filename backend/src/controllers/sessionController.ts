@@ -1,7 +1,7 @@
 import express from 'express';
 import Session from '../models/Session';
 import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/applicationView';
-import { createSessionTemplate } from '../views/sessionView';
+import { createSessionTemplate, refreshTokenSessionTemplate } from '../views/sessionView';
 
 export const createSession = async (req: express.Request, res: express.Response) => {
   try {
@@ -42,4 +42,26 @@ export const deleteSession = async (req: express.Request, res: express.Response)
 
 export const verifySession = async (_: express.Request, res: express.Response) => {
   return res.status(200).send({ status: 200 });
+};
+
+export const refreshTokenSession = async (req: express.Request, res: express.Response) => {
+  try {
+    const refreshTokenSessionResult = await Session.refreshToken(req.body);
+    if (!refreshTokenSessionResult.success) {
+      if (refreshTokenSessionResult.type == 'zod') {
+        return res.status(400).send(zodParseErrorTemplate(refreshTokenSessionResult.errors));
+      } else {
+        return res
+          .status(refreshTokenSessionResult.error.statusCode)
+          .send(awsErrorTemplate(refreshTokenSessionResult.error));
+      }
+    }
+    if (refreshTokenSessionResult.res.AuthenticationResult != null) {
+      return res.status(200).send(refreshTokenSessionTemplate(refreshTokenSessionResult.res.AuthenticationResult));
+    }
+    return res.status(500).send(internalServerErrorTemplate());
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(internalServerErrorTemplate());
+  }
 };

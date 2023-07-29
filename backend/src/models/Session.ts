@@ -1,7 +1,7 @@
 import { cognito } from '../lib/awsConfig';
 import crypto from 'crypto';
 import z from 'zod';
-import { IAWSError, ILogin, IZodError, awsError } from '../types';
+import { IAWSError, ILogin, IRefreshToken, IZodError, awsError } from '../types';
 
 const loginParam = z.object({
   username: z.string(),
@@ -14,6 +14,11 @@ const logoutParam = z.object({
 
 const verifyParam = z.object({
   token: z.string(),
+});
+
+const refreshTokenParam = z.object({
+  username: z.string(),
+  refreshToken: z.string(),
 });
 
 const login = async (params: any) => {
@@ -132,4 +137,53 @@ const verify = async (params: any) => {
   }
 };
 
-export default { login, logout, verify };
+const refreshToken = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = refreshTokenParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+
+  const { refreshToken, username } = parsedParams.data;
+  const { userPoolId, client, clientId, clientSecret } = cognito;
+
+  try {
+    const res = await client
+      .adminInitiateAuth({
+        UserPoolId: userPoolId,
+        ClientId: clientId,
+        AuthFlow: 'REFRESH_TOKEN_AUTH',
+        AuthParameters: {
+          REFRESH_TOKEN: refreshToken,
+          SECRET_HASH: crypto
+            .createHmac('sha256', clientSecret)
+            .update(username + clientId)
+            .digest('base64'),
+        },
+      })
+      .promise();
+
+    const ret: IRefreshToken = { success: true, res };
+    return ret;
+  } catch (error) {
+    console.error(error);
+    const parsedError = awsError.safeParse(error);
+    if (parsedError.success) {
+      const ret: IAWSError = {
+        success: false,
+        error: parsedError.data,
+        type: 'aws',
+      };
+      return ret;
+    }
+    throw error;
+  }
+};
+
+export default { login, logout, verify, refreshToken };

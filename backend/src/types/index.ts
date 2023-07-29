@@ -28,3 +28,8 @@ export interface ILogin {
   success: true;
   res: CognitoIdentityServiceProvider.AdminInitiateAuthResponse;
 }
+
+export interface IRefreshToken {
+  success: true;
+  res: CognitoIdentityServiceProvider.AdminInitiateAuthResponse;
+}
