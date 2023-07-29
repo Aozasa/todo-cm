@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/User';
-import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/commonView';
+import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/applicationView';
 import { createUserTemplate } from '../views/userView';
 
 export const createUser = async (req: express.Request, res: express.Response) => {
@@ -16,9 +16,9 @@ export const createUser = async (req: express.Request, res: express.Response) =>
     if (createUserResult.res.User?.Attributes != null) {
       return res.status(200).send(createUserTemplate(createUserResult.res.User.Attributes));
     }
-    return res.status(500).send(internalServerErrorTemplate);
+    return res.status(500).send(internalServerErrorTemplate());
   } catch (error) {
     console.error(error);
-    return res.status(500).send(internalServerErrorTemplate);
+    return res.status(500).send(internalServerErrorTemplate());
   }
 };

@@ -1,6 +1,6 @@
 import express from 'express';
 import Session from '../models/Session';
-import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/commonView';
+import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/applicationView';
 import { createSessionTemplate } from '../views/sessionView';
 
 export const createSession = async (req: express.Request, res: express.Response) => {
@@ -16,10 +16,10 @@ export const createSession = async (req: express.Request, res: express.Response)
     if (createSessionResult.res.AuthenticationResult != null) {
       return res.status(200).send(createSessionTemplate(createSessionResult.res.AuthenticationResult));
     }
-    return res.status(500).send(internalServerErrorTemplate);
+    return res.status(500).send(internalServerErrorTemplate());
   } catch (error) {
     console.error(error);
-    return res.status(500).send(internalServerErrorTemplate);
+    return res.status(500).send(internalServerErrorTemplate());
   }
 };
 
@@ -36,6 +36,10 @@ export const deleteSession = async (req: express.Request, res: express.Response)
     return res.status(200).send({ status: 200 });
   } catch (error) {
     console.error(error);
-    return res.status(500).send(internalServerErrorTemplate);
+    return res.status(500).send(internalServerErrorTemplate());
   }
+};
+
+export const verifySession = async (_: express.Request, res: express.Response) => {
+  return res.status(200).send({ status: 200 });
 };

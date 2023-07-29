@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import { CognitoJwtVerifier } from 'aws-jwt-verify';
 
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
@@ -18,7 +19,12 @@ if (
 ) {
   throw new Error('AWS Config is not configured.');
 }
+const verifier = CognitoJwtVerifier.create({
+  userPoolId,
+  tokenUse: 'id',
+  clientId,
+});
 const cognitoClient = new AWS.CognitoIdentityServiceProvider({ accessKeyId, secretAccessKey, region });
-const cognito = { userPoolId, clientId, clientSecret, client: cognitoClient };
+const cognito = { userPoolId, clientId, clientSecret, client: cognitoClient, verifier };
 
 export { cognito };

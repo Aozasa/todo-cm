@@ -12,6 +12,10 @@ const logoutParam = z.object({
   username: z.string(),
 });
 
+const verifyParam = z.object({
+  token: z.string(),
+});
+
 const login = async (params: any) => {
   // バリデーションチェック
   const parsedParams = loginParam.safeParse(params);
@@ -105,4 +109,27 @@ const logout = async (params: any) => {
   }
 };
 
-export default { login, logout };
+const verify = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = verifyParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+  const { token } = parsedParams.data;
+  const { verifier } = cognito;
+  try {
+    await verifier.verify(token);
+    return { success: true };
+  } catch (err) {
+    console.error(err);
+    return { success: false, error: { message: 'token is invalid' } };
+  }
+};
+
+export default { login, logout, verify };
