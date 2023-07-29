@@ -1,6 +1,6 @@
 import { cognito } from '../lib/awsConfig';
 import z from 'zod';
-import { IAWSError, ICreate, IZodError, awsError } from '../types';
+import { IAWSError, ICreateUser, IZodError, awsError } from '../types';
 
 const createUserParam = z.object({
   username: z.string().refine(val => val.length > 1 && val.length < 128, {
@@ -63,7 +63,7 @@ const create = async (params: any) => {
       })
       .promise();
 
-    const ret: ICreate = { success: true, res: userRes };
+    const ret: ICreateUser = { success: true, res: userRes };
     return ret;
   } catch (error) {
     console.error(error);

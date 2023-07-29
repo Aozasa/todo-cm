@@ -19,7 +19,17 @@ export interface IAWSError {
   type: 'aws';
 }
 
-export interface ICreate {
+export interface ICreateUser {
   success: true;
   res: CognitoIdentityServiceProvider.AdminCreateUserResponse;
+}
+
+export interface ILogin {
+  success: true;
+  res: CognitoIdentityServiceProvider.AdminInitiateAuthResponse;
+}
+
+export interface IRefreshToken {
+  success: true;
+  res: CognitoIdentityServiceProvider.AdminInitiateAuthResponse;
 }

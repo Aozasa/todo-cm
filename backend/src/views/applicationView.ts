@@ -4,6 +4,10 @@ export const internalServerErrorTemplate = () => {
   return { message: 'Internal server error.', status: 500 };
 };
 
+export const unauthorizedErrorTemplate = () => {
+  return { message: 'Unauthorized Error.', status: 401 };
+};
+
 export const zodParseErrorTemplate = (errors: IZodError['errors']) => {
   return {
     status: 400,
