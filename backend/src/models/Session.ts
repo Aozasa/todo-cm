@@ -8,6 +8,10 @@ const loginParam = z.object({
   password: z.string(),
 });
 
+const logoutParam = z.object({
+  username: z.string(),
+});
+
 const login = async (params: any) => {
   // バリデーションチェック
   const parsedParams = loginParam.safeParse(params);
@@ -60,4 +64,45 @@ const login = async (params: any) => {
   }
 };
 
-export default { login };
+const logout = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = logoutParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+
+  const { username } = parsedParams.data;
+  const { userPoolId, client } = cognito;
+
+  try {
+    await client
+      .adminUserGlobalSignOut({
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+      .promise();
+
+    const ret: { success: true } = { success: true };
+    return ret;
+  } catch (error) {
+    console.error(error);
+    const parsedError = awsError.safeParse(error);
+    if (parsedError.success) {
+      const ret: IAWSError = {
+        success: false,
+        error: parsedError.data,
+        type: 'aws',
+      };
+      return ret;
+    }
+    throw error;
+  }
+};
+
+export default { login, logout };

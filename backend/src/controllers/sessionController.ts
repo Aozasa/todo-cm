@@ -22,3 +22,20 @@ export const createSession = async (req: express.Request, res: express.Response)
     return res.status(500).send(internalServerErrorTemplate);
   }
 };
+
+export const deleteSession = async (req: express.Request, res: express.Response) => {
+  try {
+    const deleteSessionResult = await Session.logout(req.body);
+    if (!deleteSessionResult.success) {
+      if (deleteSessionResult.type == 'zod') {
+        return res.status(400).send(zodParseErrorTemplate(deleteSessionResult.errors));
+      } else {
+        return res.status(deleteSessionResult.error.statusCode).send(awsErrorTemplate(deleteSessionResult.error));
+      }
+    }
+    return res.status(200).send({ status: 200 });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(internalServerErrorTemplate);
+  }
+};

@@ -1,7 +1,8 @@
 import express from 'express';
-import { createSession } from '../../../controllers/sessionController';
+import { createSession, deleteSession } from '../../../controllers/sessionController';
 const router = express.Router();
 
 router.post('/', createSession);
+router.delete('/', deleteSession);
 
 module.exports = router;
