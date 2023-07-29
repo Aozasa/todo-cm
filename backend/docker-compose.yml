@@ -11,7 +11,7 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "8080:8080"
+      - "8080:3000"
   todo_db:
     image: postgres:15.3
     ports: 
