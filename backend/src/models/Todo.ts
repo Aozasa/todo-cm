@@ -18,6 +18,22 @@ const listTodoParam = z.object({
   username: z.string().nullish(),
 });
 
+const updateTodoParam = z.object({
+  data: z.object({
+    title: z.string().nonempty().max(255).optional(),
+    description: z.string().nonempty().max(2047).optional(),
+    isClosed: z.preprocess(item => item == 'true', z.boolean()).optional(),
+    closedAt: z.coerce.date().nullish(),
+    finishedAt: z.coerce.date().nullish(),
+    priority: z.union([z.literal('HIGH'), z.literal('MIDDLE'), z.literal('LOW')]).optional(),
+    username: z.string().optional(),
+  }),
+  where: z.object({
+    username: z.string().optional(),
+    id: z.coerce.number(),
+  }),
+});
+
 const create = async (params: any) => {
   // バリデーションチェック
   const parsedParams = createTodoParam.safeParse(params);
@@ -81,4 +97,35 @@ const list = async (params: any) => {
   }
 };
 
-export default { create, list };
+const update = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = updateTodoParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+
+  try {
+    const todo = await prisma.todos.update({ where: parsedParams.data.where, data: parsedParams.data.data });
+    const ret: { success: true; res: Todos } = { success: true, res: todo };
+    return ret;
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const ret: IPrismaError = {
+        success: false,
+        error: error,
+        type: 'prisma',
+      };
+      return ret;
+    }
+    throw error;
+  }
+};
+
+export default { create, list, update };
