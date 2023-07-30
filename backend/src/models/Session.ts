@@ -54,8 +54,6 @@ const login = async (params: any) => {
     };
     const loginRes = await client.adminInitiateAuth(params).promise();
 
-    console.log(loginRes);
-
     const ret: ILogin = { success: true, res: loginRes };
     return ret;
   } catch (error) {
@@ -129,11 +127,16 @@ const verify = async (params: any) => {
   const { token } = parsedParams.data;
   const { verifier } = cognito;
   try {
-    await verifier.verify(token);
-    return { success: true };
+    const res = await verifier.verify(token);
+    const ret: { success: true; res: typeof res } = { success: true, res };
+    return ret;
   } catch (err) {
     console.error(err);
-    return { success: false, error: { message: 'token is invalid' } };
+    const ret: { success: false; error: { message: string } } = {
+      success: false,
+      error: { message: 'token is invalid' },
+    };
+    return ret;
   }
 };
 
