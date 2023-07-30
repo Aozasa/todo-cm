@@ -11,3 +11,7 @@ export const listTodoTemplate = (todos: Todos[]) => {
 export const updateTodoTemplate = (todo: Todos) => {
   return { status: 200, todo };
 };
+
+export const deleteTodoTemplate = (todo: Todos) => {
+  return { status: 200 };
+};

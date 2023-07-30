@@ -6,7 +6,7 @@ import {
   unauthorizedErrorTemplate,
   zodParseErrorTemplate,
 } from '../views/applicationView';
-import { createTodoTemplate, listTodoTemplate, updateTodoTemplate } from '../views/todoView';
+import { createTodoTemplate, deleteTodoTemplate, listTodoTemplate, updateTodoTemplate } from '../views/todoView';
 import { currentUser } from '../types';
 
 export const createTodo = async (req: express.Request, res: express.Response) => {
@@ -86,6 +86,38 @@ export const updateTodo = async (req: express.Request, res: express.Response) =>
     }
     if (updateTodoResult.res != null) {
       return res.status(200).send(updateTodoTemplate(updateTodoResult.res));
+    }
+    return res.status(500).send(internalServerErrorTemplate());
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(internalServerErrorTemplate());
+  }
+};
+
+export const deleteTodo = async (req: express.Request, res: express.Response) => {
+  try {
+    const parsedCurrentUser = currentUser.safeParse(res.locals.user);
+    if (!parsedCurrentUser.success) {
+      return res.status(401).send(unauthorizedErrorTemplate());
+    }
+    let deleteTodoResult;
+    if (parsedCurrentUser.data.role == 'admin') {
+      deleteTodoResult = await Todo.remove({ id: req.params.todoId });
+    } else {
+      deleteTodoResult = await Todo.remove({
+        where: { id: req.params.todoId, username: parsedCurrentUser.data.name },
+        data: req.body,
+      });
+    }
+    if (!deleteTodoResult.success) {
+      if (deleteTodoResult.type == 'zod') {
+        return res.status(400).send(zodParseErrorTemplate(deleteTodoResult.errors));
+      } else {
+        return res.status(400).send(prismaErrorTemplate(deleteTodoResult.error));
+      }
+    }
+    if (deleteTodoResult.res != null) {
+      return res.status(200).send(deleteTodoTemplate(deleteTodoResult.res));
     }
     return res.status(500).send(internalServerErrorTemplate());
   } catch (error) {

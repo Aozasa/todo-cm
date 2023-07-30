@@ -34,6 +34,10 @@ const updateTodoParam = z.object({
   }),
 });
 
+const removeTodoParam = z.object({
+  id: z.coerce.number(),
+});
+
 const create = async (params: any) => {
   // バリデーションチェック
   const parsedParams = createTodoParam.safeParse(params);
@@ -128,4 +132,35 @@ const update = async (params: any) => {
   }
 };
 
-export default { create, list, update };
+const remove = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = removeTodoParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+
+  try {
+    const todo = await prisma.todos.delete({ where: parsedParams.data });
+    const ret: { success: true; res: Todos } = { success: true, res: todo };
+    return ret;
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const ret: IPrismaError = {
+        success: false,
+        error: error,
+        type: 'prisma',
+      };
+      return ret;
+    }
+    throw error;
+  }
+};
+
+export default { create, list, update, remove };
