@@ -1,4 +1,4 @@
-import { IAWSError, IZodError } from '../types';
+import { IAWSError, IPrismaError, IZodError } from '../types';
 
 export const internalServerErrorTemplate = () => {
   return { message: 'Internal server error.', status: 500 };
@@ -14,6 +14,21 @@ export const zodParseErrorTemplate = (errors: IZodError['errors']) => {
     errors: errors.map(err => {
       return { message: err.message, path: err.path };
     }),
+  };
+};
+
+export const prismaErrorTemplate = (error: IPrismaError['error']) => {
+  return {
+    status: 400,
+    errors: [
+      {
+        error: {
+          ...error,
+          message:
+            'Please check Prisma error code list "https://www.prisma.io/docs/reference/api-reference/error-reference"',
+        },
+      },
+    ],
   };
 };
 

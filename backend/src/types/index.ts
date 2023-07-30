@@ -1,4 +1,5 @@
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import { Prisma } from '@prisma/client';
 import z from 'zod';
 
 export const awsError = z.object({
@@ -7,10 +8,27 @@ export const awsError = z.object({
   statusCode: z.number(),
 });
 
+export const prismaError = z.object({
+  message: z.string(),
+  meta: z.object({ target: z.array(z.string()) }).nullish(),
+});
+
+export const currentUser = z.object({
+  id: z.string(),
+  name: z.string(),
+  role: z.string(),
+});
+
 export interface IZodError {
   success: false;
   errors: z.ZodIssue[];
   type: 'zod';
+}
+
+export interface IPrismaError {
+  success: false;
+  error: Prisma.PrismaClientKnownRequestError;
+  type: 'prisma';
 }
 
 export interface IAWSError {
