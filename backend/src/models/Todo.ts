@@ -14,6 +14,10 @@ const createTodoParam = z.object({
   username: z.string(),
 });
 
+const listTodoParam = z.object({
+  username: z.string().nullish(),
+});
+
 const create = async (params: any) => {
   // バリデーションチェック
   const parsedParams = createTodoParam.safeParse(params);
@@ -45,4 +49,36 @@ const create = async (params: any) => {
   }
 };
 
-export default { create };
+const list = async (params: any) => {
+  // バリデーションチェック
+  const parsedParams = listTodoParam.safeParse(params);
+  if (!parsedParams.success) {
+    // そのまま返すとtrue,falseの型推論がうまくいかないため型情報を付与
+    const ret: IZodError = {
+      success: false,
+      errors: parsedParams.error.errors,
+      type: 'zod',
+    };
+    return ret;
+  }
+
+  try {
+    const where = parsedParams.data.username == null ? undefined : { username: parsedParams.data.username };
+    const todos = await prisma.todos.findMany({ where });
+    const ret: { success: true; res: Todos[] } = { success: true, res: todos };
+    return ret;
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const ret: IPrismaError = {
+        success: false,
+        error: error,
+        type: 'prisma',
+      };
+      return ret;
+    }
+    throw error;
+  }
+};
+
+export default { create, list };

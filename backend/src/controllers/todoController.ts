@@ -6,7 +6,7 @@ import {
   unauthorizedErrorTemplate,
   zodParseErrorTemplate,
 } from '../views/applicationView';
-import { createTodoTemplate } from '../views/todoView';
+import { createTodoTemplate, listTodoTemplate } from '../views/todoView';
 import { currentUser } from '../types';
 
 export const createTodo = async (req: express.Request, res: express.Response) => {
@@ -25,6 +25,35 @@ export const createTodo = async (req: express.Request, res: express.Response) =>
     }
     if (createTodoResult.res != null) {
       return res.status(200).send(createTodoTemplate(createTodoResult.res));
+    }
+    return res.status(500).send(internalServerErrorTemplate());
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(internalServerErrorTemplate());
+  }
+};
+
+export const listTodo = async (req: express.Request, res: express.Response) => {
+  try {
+    const parsedCurrentUser = currentUser.safeParse(res.locals.user);
+    if (!parsedCurrentUser.success) {
+      return res.status(401).send(unauthorizedErrorTemplate());
+    }
+    let listTodoResult;
+    if (parsedCurrentUser.data.role == 'admin') {
+      listTodoResult = await Todo.list({});
+    } else {
+      listTodoResult = await Todo.list({ username: parsedCurrentUser.data.name });
+    }
+    if (!listTodoResult.success) {
+      if (listTodoResult.type == 'zod') {
+        return res.status(400).send(zodParseErrorTemplate(listTodoResult.errors));
+      } else {
+        return res.status(400).send(prismaErrorTemplate(listTodoResult.error));
+      }
+    }
+    if (listTodoResult.res != null) {
+      return res.status(200).send(listTodoTemplate(listTodoResult.res));
     }
     return res.status(500).send(internalServerErrorTemplate());
   } catch (error) {
