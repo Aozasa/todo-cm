@@ -357,7 +357,7 @@ describe('refreshTokenSession(Session controller)', () => {
     const mock = jest.spyOn(Session, 'refreshToken');
     mock.mockReturnValue({
       success: true,
-      res: {},
+      res: { AuthenticationResult: null },
     } as any);
     const viewMock = jest.spyOn(applicationView, 'internalServerErrorTemplate');
     const response = { status: 500, error: 'error' };
@@ -371,7 +371,7 @@ describe('refreshTokenSession(Session controller)', () => {
         };
       }),
     };
-    const result = await createSession({} as any, res as any);
+    const result = await refreshTokenSession({} as any, res as any);
 
     expect(result).toEqual(response);
     expect(res.status.mock.calls[0][0]).toBe(500);
