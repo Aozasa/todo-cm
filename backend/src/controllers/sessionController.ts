@@ -1,7 +1,12 @@
 import express from 'express';
 import Session from '../models/Session';
 import { awsErrorTemplate, internalServerErrorTemplate, zodParseErrorTemplate } from '../views/applicationView';
-import { createSessionTemplate, refreshTokenSessionTemplate } from '../views/sessionView';
+import {
+  createSessionTemplate,
+  deleteSessionTemplate,
+  refreshTokenSessionTemplate,
+  verifySessionTemplate,
+} from '../views/sessionView';
 
 export const createSession = async (req: express.Request, res: express.Response) => {
   try {
@@ -33,7 +38,7 @@ export const deleteSession = async (req: express.Request, res: express.Response)
         return res.status(deleteSessionResult.error.statusCode).send(awsErrorTemplate(deleteSessionResult.error));
       }
     }
-    return res.status(200).send({ status: 200 });
+    return res.status(200).send(deleteSessionTemplate());
   } catch (error) {
     console.error(error);
     return res.status(500).send(internalServerErrorTemplate());
@@ -41,7 +46,7 @@ export const deleteSession = async (req: express.Request, res: express.Response)
 };
 
 export const verifySession = async (_: express.Request, res: express.Response) => {
-  return res.status(200).send({ status: 200 });
+  return res.status(200).send(verifySessionTemplate());
 };
 
 export const refreshTokenSession = async (req: express.Request, res: express.Response) => {

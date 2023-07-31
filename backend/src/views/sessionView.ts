@@ -22,3 +22,11 @@ export const refreshTokenSessionTemplate = (
     },
   };
 };
+
+export const verifySessionTemplate = () => {
+  return { status: 200 };
+};
+
+export const deleteSessionTemplate = () => {
+  return { status: 200 };
+};
