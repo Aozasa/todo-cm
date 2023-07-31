@@ -1,4 +1,3 @@
-import { rejects } from 'assert';
 import { cognito } from '../../lib/awsConfig';
 import Session from '../../models/Session';
 
