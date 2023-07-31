@@ -3,7 +3,7 @@ import z from 'zod';
 import { IAWSError, ICreateUser, IZodError, awsError } from '../types';
 
 const createUserParam = z.object({
-  username: z.string().refine(val => val.length > 1 && val.length < 128, {
+  username: z.string().refine(val => val.length > 1 && val.length < 129, {
     message: 'username must be 1 to 128 characters',
   }),
   password: z
