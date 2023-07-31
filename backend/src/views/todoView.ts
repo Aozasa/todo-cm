@@ -12,6 +12,6 @@ export const updateTodoTemplate = (todo: Todos) => {
   return { status: 200, todo };
 };
 
-export const deleteTodoTemplate = (todo: Todos) => {
+export const deleteTodoTemplate = () => {
   return { status: 200 };
 };

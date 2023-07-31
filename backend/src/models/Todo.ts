@@ -1,8 +1,7 @@
-import { PrismaClient, Todos, Prisma } from '@prisma/client';
+import { Todos, Prisma } from '@prisma/client';
+import prisma from '../../client';
 import z from 'zod';
-import { IPrismaError, IZodError, prismaError } from '../types';
-
-const prisma = new PrismaClient();
+import { IPrismaError, IZodError } from '../types';
 
 const createTodoParam = z.object({
   title: z.string().nonempty().max(255),
@@ -36,6 +35,7 @@ const updateTodoParam = z.object({
 
 const removeTodoParam = z.object({
   id: z.coerce.number(),
+  username: z.string().optional(),
 });
 
 const create = async (params: any) => {

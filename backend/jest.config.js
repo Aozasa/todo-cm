@@ -4,5 +4,5 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
-  setupFilesAfterEnv: [`${process.cwd()}/jest.setup.js`],
+  setupFilesAfterEnv: [`${process.cwd()}/jest.setup.js`, `${process.cwd()}/singleton.ts`],
 };

@@ -105,8 +105,8 @@ export const deleteTodo = async (req: express.Request, res: express.Response) =>
       deleteTodoResult = await Todo.remove({ id: req.params.todoId });
     } else {
       deleteTodoResult = await Todo.remove({
-        where: { id: req.params.todoId, username: parsedCurrentUser.data.name },
-        data: req.body,
+        id: req.params.todoId,
+        username: parsedCurrentUser.data.name,
       });
     }
     if (!deleteTodoResult.success) {
@@ -117,7 +117,7 @@ export const deleteTodo = async (req: express.Request, res: express.Response) =>
       }
     }
     if (deleteTodoResult.res != null) {
-      return res.status(200).send(deleteTodoTemplate(deleteTodoResult.res));
+      return res.status(200).send(deleteTodoTemplate());
     }
     return res.status(500).send(internalServerErrorTemplate());
   } catch (error) {
