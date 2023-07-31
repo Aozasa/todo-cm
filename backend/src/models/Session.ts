@@ -108,6 +108,7 @@ const logout = async (params: any) => {
       };
       return ret;
     }
+    console.log('hogehoge');
     throw error;
   }
 };
