@@ -1,0 +1,634 @@
+openapi: "3.0.3"
+info:
+  title: ToDo管理API
+  version: 1.0.0
+  description: |
+    ToDo管理を行うためのAPIです。認証にはAWS Cognitoを利用しています。
+    ヘッダはAuthorizationを利用し、typeはBearerとします。例：Authorization: Bearer 認証トークン
+servers:
+  - url: localhost:3000
+tags:
+  - name: session
+    description: 認証情報
+  - name: user
+    description: ユーザ情報
+  - name: todo
+    description: ToDo情報
+paths:
+  /api/sessions:
+    post:
+      tags:
+        - session
+      summary: ログイン
+      description: |
+        AWS Cognitoに対してログインを行いトークンを発行します。
+        認証トークンの期限は60分でリフレッシュトークンの期限は30日です。
+      requestBody:
+        description: 認証情報
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: ユーザ名(AozasaSeiya)
+                password:
+                  type: string
+                  example: パスワード(password01)
+      responses:
+        200:
+          description: 認証トークンとリフレッシュトークンを返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  session:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: 認証トークン(eyJraWQiOiJYY3hyR0JiRlZm...)
+                      refreshToken:
+                        type: string
+                        example: リフレッシュトークン(eyJjdHkiOiJKV1QiLCJlbmMi...)
+        400:
+          description: ログインに失敗しました。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Incorrect username or password.)
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+    get:
+      tags:
+        - session
+      summary: トークンの検証
+      description: |
+        Authorizationヘッダに付与された認証トークンの検証を行います。
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: ステータスコード200を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+        401:
+          description: 認証エラーです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 401
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: エラーメッセージ(Unauthorized Error.)
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+    delete:
+      tags:
+        - session
+      summary: ログアウト
+      description: |
+        Authorizationヘッダのトークンを元にユーザのログアウトを行います。
+        無効化されるのはリフレッシュトークンのみとなります。
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: ステータスコード200を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+        401:
+          description: 認証エラーです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 401
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: エラーメッセージ(Unauthorized Error.)
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  /api/sessions/refresh:
+    post:
+      tags:
+        - session
+      summary: トークンリフレッシュ
+      description: |
+        払い出されたリフレッシュトークンを利用し新しい認証トークンを発行します。
+        認証トークンの期限は60分です。
+      requestBody:
+        description: 認証情報
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - refreshToken
+              properties:
+                username:
+                  type: string
+                  example: ユーザ名(AozasaSeiya)
+                refreshToken:
+                  type: string
+                  example: リフレッシュトークン(eyJjdHkiOiJKV1QiLCJlbmMi...)
+      responses:
+        200:
+          description: 認証トークンを返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  session:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: 認証トークン(eyJraWQiOiJYY3hyR0JiRlZm...)
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Required)
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: エラー項目(refreshToken)
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  /api/users:
+    post:
+      tags:
+      - user
+      summary: ユーザ登録
+      description: |
+        AWS Cognitoにユーザ登録を行います。
+      requestBody:
+        description: |
+          usernameは1～128文字以内で入力してください。
+          passwordは1～256文字以内かつ半角英小文字と数字のどちらも含んでいる必要があります。
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: ユーザ名(AozasaSeiya)
+                password:
+                  type: string
+                  example: パスワード(password01)
+      responses:
+        200:
+          description: 登録ユーザ情報を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  user:
+                    $ref: '#/components/schemas/User'
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Required)
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: 'エラー項目(username)'
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  /api/todos:
+    post:
+      tags:
+      - todo
+      summary: ToDo登録
+      description: |
+        ToDoデータの登録を行います。ユーザがadminロールの場合に、usernameを指定して他ユーザのToDoを登録することができます。
+        generalロールの場合は自分のTodoのみ登録可能です。
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+              properties:
+                title:
+                  type: string
+                  example: ToDoタイトル
+                description:
+                  type: string
+                  example: ToDo内容
+                closedAt:
+                  type: string
+                  example: 締切日(2023/10/01)
+                priority:
+                  type: string
+                  example: 優先度(HIGH|MIDDLE|LOW)
+                username:
+                  type: string
+                  example: ユーザ名(AozasaSeiya)
+      responses:
+        200:
+          description: 登録ToDo情報を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  todo:
+                    $ref: '#/components/schemas/Todo'
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Required)
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: 'エラー項目(title)'
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+    get:
+      tags:
+      - todo
+      summary: ToDo一覧
+      description: |
+        ToDoデータの一覧取得を行います。ユーザがadminロールの場合は全ユーザのToDoを確認することができます。
+        generalロールの場合は自分のTodoのみ取得可能です。
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: ToDo一覧情報を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  todos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Todo'
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: "Required"
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: 'username'
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  /api/todos/{todoId}:
+    patch:
+      tags:
+      - todo
+      summary: ToDo更新
+      description: |
+        ToDoデータの更新を行います。ユーザがadminロールの場合に、他ユーザのToDoを更新することができます。
+        generalロールの場合は自分のTodoのみ更新可能です。
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: todoId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: ToDoタイトル
+                description:
+                  type: string
+                  example: ToDo内容
+                closedAt:
+                  type: string
+                  example: 締切日(2023/10/01)
+                priority:
+                  type: string
+                  example: 優先度(HIGH|MIDDLE|LOW)
+                username:
+                  type: string
+                  example: ユーザ名(AozasaSeiya)
+                finishedAt:
+                  type: string
+                  example: 完了日(2023/10/01)
+                isClosed:
+                  type: boolean
+                  example: 完了フラグ(true)
+      responses:
+        200:
+          description: 更新したToDo情報を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  todo:
+                    $ref: '#/components/schemas/Todo'
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Required)
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: 'エラー項目(title)'
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+    delete:
+      tags:
+      - todo
+      summary: ToDo削除
+      description: |
+        ToDoデータの削除を行います。ユーザがadminロールの場合に、他ユーザのToDoを削除することができます。
+        generalロールの場合は自分のTodoのみ削除可能です。
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: todoId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: ステータスコード200を返します。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+        400:
+          description: 不正なパラメータです。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 400
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: エラーメッセージ(Required)
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: 'エラー項目(title)'
+        500:
+          description: 予期しないエラーです。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+components:
+  securitySchemes:
+    BearerAuth:
+        type: http
+        scheme: bearer
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: ユーザ名(AozasaSeiya)
+        id:
+          type: string
+          example: ユーザID(e7348a48-b0a1-70e0-4c7d-9dc5f1aaa24a)
+        role:
+          type: string
+          example: ユーザロール(admin | general)
+    Todo:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        title:
+          type: string
+          example: ToDoタイトル
+        description:
+          type: string
+          example: ToDo内容
+        isClosed:
+          type: boolean
+          example: 完了フラグ(true)
+        closedAt:
+          type: string
+          example: 締切日(2023/10/01)
+        priority:
+          type: string
+          example: 優先度(HIGH|MIDDLE|LOW)
+        username:
+          type: string
+          example: ユーザ名(AozasaSeiya)
+        finishedAt:
+          type: string
+          example: 完了日(2023/10/01)
+    500Error:
+      type: object
+      required:
+        - status
+        - error
+      properties:
+        status:
+          type: number
+          example: 500
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: エラーメッセージ(Internal server error.)

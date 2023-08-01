@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="main.css">
+    <meta charset="UTF-8">
+    <title>ToDo管理API</title>
+                                                         </head>
+<body>
+<div class="container">
+    <h1>ToDo管理API</h1>
+    <p class="sw-info">
+        
+        Version: <span class="sw-info-version">1.0.0</span>
+    </p>
+    <p><p>ToDo管理を行うためのAPIです。認証にはAWS Cognitoを利用しています。
+    ヘッダはAuthorizationを利用し、typeはBearerとします。例：Authorization: Bearer 認証トークン</p>
+    </p>
+    
+    
+    <div id="sw-schemes" class="sw-default-value">
+        <span class="sw-default-value-header">Schemes:</span>
+        
+    </div>
+    
+        
+        <h2 id="swagger--summary-tags">Summary</h2>
+            <h3 id="tag-session" class="swagger-summary-tag">Tag: session</h3>
+            <p>認証情報</p>
+        
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--api-sessions-post">POST /api/sessions</a></td>
+                        <td><p>ログイン</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-sessions-get">GET /api/sessions</a></td>
+                        <td><p>トークンの検証</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-sessions-delete">DELETE /api/sessions</a></td>
+                        <td><p>ログアウト</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-sessions-refresh-post">POST /api/sessions/refresh</a></td>
+                        <td><p>トークンリフレッシュ</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-user" class="swagger-summary-tag">Tag: user</h3>
+            <p>ユーザ情報</p>
+        
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--api-users-post">POST /api/users</a></td>
+                        <td><p>ユーザ登録</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="tag-todo" class="swagger-summary-tag">Tag: todo</h3>
+            <p>ToDo情報</p>
+        
+            <p class="sw-tag-external-doc">
+            </p>
+            <table class="table table-bordered table-condensed swagger--summary">
+                <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#operation--api-todos-post">POST /api/todos</a></td>
+                        <td><p>ToDo登録</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-todos-get">GET /api/todos</a></td>
+                        <td><p>ToDo一覧</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-todos--todoId--patch">PATCH /api/todos/{todoId}</a></td>
+                        <td><p>ToDo更新</p>
+        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#operation--api-todos--todoId--delete">DELETE /api/todos/{todoId}</a></td>
+                        <td><p>ToDo削除</p>
+        </td>
+                    </tr>
+                </tbody>
+            </table>
+        
+    
+    
+    
+    <h2>Paths</h2>
+    
+        
+        <span id="path--api-sessions"></span>
+            <div id="operation--api-sessions-delete" class="swagger--panel-operation-delete panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">&#x30ED;&#x30B0;&#x30A2;&#x30A6;&#x30C8;</div>
+                    <h3 class="panel-title"><span class="operation-name">DELETE</span> <strong>/api/sessions</strong></h3>
+                        Tags:
+                            <a href="#tag-session">session</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Authorizationヘッダのトークンを元にユーザのログアウトを行います。
+            無効化されるのはリフレッシュトークンのみとなります。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>ステータスコード200を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-401">
+                                        401 Unauthorized
+                                    
+                                    </dt>
+                                    <dd class="sw-response-401">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>認証エラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--api-sessions-get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">&#x30C8;&#x30FC;&#x30AF;&#x30F3;&#x306E;&#x691C;&#x8A3C;</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/api/sessions</strong></h3>
+                        Tags:
+                            <a href="#tag-session">session</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Authorizationヘッダに付与された認証トークンの検証を行います。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>ステータスコード200を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-401">
+                                        401 Unauthorized
+                                    
+                                    </dt>
+                                    <dd class="sw-response-401">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>認証エラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--api-sessions-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">&#x30ED;&#x30B0;&#x30A4;&#x30F3;</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/api/sessions</strong></h3>
+                        Tags:
+                            <a href="#tag-session">session</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>AWS Cognitoに対してログインを行いトークンを発行します。
+            認証トークンの期限は60分でリフレッシュトークンの期限は30日です。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>認証トークンとリフレッシュトークンを返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>ログインに失敗しました。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--api-sessions-refresh"></span>
+            <div id="operation--api-sessions-refresh-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">&#x30C8;&#x30FC;&#x30AF;&#x30F3;&#x30EA;&#x30D5;&#x30EC;&#x30C3;&#x30B7;&#x30E5;</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/api/sessions/refresh</strong></h3>
+                        Tags:
+                            <a href="#tag-session">session</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>払い出されたリフレッシュトークンを利用し新しい認証トークンを発行します。
+            認証トークンの期限は60分です。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>認証トークンを返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--api-todos"></span>
+            <div id="operation--api-todos-get" class="swagger--panel-operation-get panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">ToDo&#x4E00;&#x89A7;</div>
+                    <h3 class="panel-title"><span class="operation-name">GET</span> <strong>/api/todos</strong></h3>
+                        Tags:
+                            <a href="#tag-todo">todo</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>ToDoデータの一覧取得を行います。ユーザがadminロールの場合は全ユーザのToDoを確認することができます。
+            generalロールの場合は自分のTodoのみ取得可能です。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>ToDo一覧情報を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--api-todos-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">ToDo&#x767B;&#x9332;</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/api/todos</strong></h3>
+                        Tags:
+                            <a href="#tag-todo">todo</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>ToDoデータの登録を行います。ユーザがadminロールの場合に、usernameを指定して他ユーザのToDoを登録することができます。
+            generalロールの場合は自分のTodoのみ登録可能です。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>登録ToDo情報を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--api-todos--todoId-"></span>
+            <div id="operation--api-todos--todoId--delete" class="swagger--panel-operation-delete panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">ToDo&#x524A;&#x9664;</div>
+                    <h3 class="panel-title"><span class="operation-name">DELETE</span> <strong>/api/todos/{todoId}</strong></h3>
+                        Tags:
+                            <a href="#tag-todo">todo</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>ToDoデータの削除を行います。ユーザがadminロールの場合に、他ユーザのToDoを削除することができます。
+            generalロールの場合は自分のTodoのみ削除可能です。</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                todoId
+                                            </td>
+                                            <td></td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">object</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>ステータスコード200を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+            <div id="operation--api-todos--todoId--patch" class="swagger--panel-operation-patch panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">ToDo&#x66F4;&#x65B0;</div>
+                    <h3 class="panel-title"><span class="operation-name">PATCH</span> <strong>/api/todos/{todoId}</strong></h3>
+                        Tags:
+                            <a href="#tag-todo">todo</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>ToDoデータの更新を行います。ユーザがadminロールの場合に、他ユーザのToDoを更新することができます。
+            generalロールの場合は自分のTodoのみ更新可能です。</p>
+            
+                    </section>
+            
+                    
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                todoId
+                                            </td>
+                                            <td></td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">object</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>更新したToDo情報を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                        <section class="sw-request-security">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-request-security-schema"></th>
+                                    <th class="sw-request-security-scopes"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td><a href="#security-definition-BearerAuth">BearerAuth</a></td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                </div>
+            </div>
+        
+        <span id="path--api-users"></span>
+            <div id="operation--api-users-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">&#x30E6;&#x30FC;&#x30B6;&#x767B;&#x9332;</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/api/users</strong></h3>
+                        Tags:
+                            <a href="#tag-user">user</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>AWS Cognitoにユーザ登録を行います。</p>
+            
+                    </section>
+            
+                    
+                    
+                        <section class="sw-responses">
+                    
+                            <dl>
+                                    <dt class="sw-response-200">
+                                        200 OK
+                                    
+                                    </dt>
+                                    <dd class="sw-response-200">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>登録ユーザ情報を返します。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>不正なパラメータです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                                    <dt class="sw-response-500">
+                                        500 Internal Server Error
+                                    
+                                    </dt>
+                                    <dd class="sw-response-500">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>予期しないエラーです。</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+    
+     
+    
+                       
+    
+</div>
+
+</body>
+</html>
