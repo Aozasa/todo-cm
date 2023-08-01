@@ -1,11 +1,13 @@
 version: "3.8"
 services:
   todo_backend:
-    image: node
+    image: node:20
     working_dir: /backend
     volumes:
       - .:/backend
-    # command: >
+    command:
+      - npm
+      - start
     depends_on:
       - todo_db
     tty: true
@@ -14,8 +16,9 @@ services:
       - "8080:3000"
   todo_db:
     image: postgres:15.3
-    ports: 
-      - "5432:5432"
+    # debug
+    # ports: 
+    #   - "5432:5432"
     volumes:
       - todo_db_volume:/var/lib/postgresql/data
     environment:
