@@ -38,13 +38,19 @@ ToDo を管理するためのアプリケーションです。以下の機能を
 前提として docker、docker compose が利用できる環境を準備してください。
 
 1. .env.sample を参考に AWS の接続情報を記した.env ファイルを backend フォルダ配下に配置します。(接続情報は別途送付します。)
-2. backend フォルダへ移動し、docker-compose コマンドでシステムを起動します。
+2. backend フォルダへ移動し、DB のマイグレーションを行います。
 
 ```
-  $ cd backend && docker-compose up -d
+  $ cd backend && docker-compose run -it --rm todo_backend npx prisma migrate dev
 ```
 
-3. localhost:8080 でサーバにアクセスができます。curl コマンド等で利用してください。
+3. システムを起動します。
+
+```
+  $ docker-compose up -d
+```
+
+4. localhost:8080 でサーバにアクセスができます。curl コマンド等で利用してください。
 
 ## システムの動作確認手順
 
