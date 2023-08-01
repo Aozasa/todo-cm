@@ -3,6 +3,8 @@ import * as userView from '../../views/userView';
 import * as applicationView from '../../views/applicationView';
 import { createUser } from '../../controllers/userController';
 
+jest.mock('aws-jwt-verify');
+
 describe('createUser(User controller)', () => {
   test('createが成功したらトークンを返す', async () => {
     const mock = jest.spyOn(User, 'create');

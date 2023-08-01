@@ -6,9 +6,7 @@ import { IPrismaError, IZodError } from '../types';
 const createTodoParam = z.object({
   title: z.string().nonempty().max(255),
   description: z.string().nonempty().max(2047),
-  isClosed: z.preprocess(item => item == 'true', z.boolean()),
   closedAt: z.coerce.date().nullish(),
-  finishedAt: z.coerce.date().nullish(),
   priority: z.union([z.literal('HIGH'), z.literal('MIDDLE'), z.literal('LOW')]).nullish(),
   username: z.string(),
 });
@@ -52,7 +50,7 @@ const create = async (params: any) => {
   }
 
   try {
-    const todo = await prisma.todos.create({ data: { ...parsedParams.data } });
+    const todo = await prisma.todos.create({ data: { ...parsedParams.data, isClosed: false } });
     const ret: { success: true; res: Todos } = { success: true, res: todo };
     return ret;
   } catch (error) {

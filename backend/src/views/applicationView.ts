@@ -1,11 +1,11 @@
 import { IAWSError, IPrismaError, IZodError } from '../types';
 
 export const internalServerErrorTemplate = () => {
-  return { message: 'Internal server error.', status: 500 };
+  return { error: { message: 'Internal server error.' }, status: 500 };
 };
 
 export const unauthorizedErrorTemplate = () => {
-  return { message: 'Unauthorized Error.', status: 401 };
+  return { error: { message: 'Unauthorized Error.' }, status: 401 };
 };
 
 export const zodParseErrorTemplate = (errors: IZodError['errors']) => {

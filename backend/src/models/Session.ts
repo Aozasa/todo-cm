@@ -108,7 +108,6 @@ const logout = async (params: any) => {
       };
       return ret;
     }
-    console.log('hogehoge');
     throw error;
   }
 };
@@ -127,6 +126,7 @@ const verify = async (params: any) => {
   }
   const { token } = parsedParams.data;
   const { verifier } = cognito;
+  console.log(verifier);
   try {
     const res = await verifier.verify(token);
     const ret: { success: true; res: typeof res } = { success: true, res };
