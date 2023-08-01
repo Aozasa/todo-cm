@@ -1,0 +1,25 @@
+name: Run jest
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.5]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      - run: npm run check
+        working-directory: ./backend
+      - run: npm test
+        working-directory: ./backend
