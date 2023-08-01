@@ -23,11 +23,12 @@ jobs:
         working-directory: ./backend
       - run: npm test
         working-directory: ./backend
+        # ダミー
         env:
-          DATABASE_URL: ""
-          AWS_ACCESS_KEY_ID: ""
-          AWS_SECRET_ACCESS_KEY: ""
-          AWS_REGION: ""
-          COGNITO_USER_POOL_ID: ""
-          COGNITO_CLINET_ID: ""
-          COGNITO_CLINET_SECRET: ""
+          DATABASE_URL: "postgres://postgres/todo"
+          AWS_ACCESS_KEY_ID: "AAAAAAAAAAAAAAAAAAAA"
+          AWS_SECRET_ACCESS_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          AWS_REGION: "ap-northeast-1"
+          COGNITO_USER_POOL_ID: "aaaaaaaaaaaaaaaaaaaaaaaa"
+          COGNITO_CLINET_ID: "aaaaaaaaaaaaaaaaaaaaaaaaaa"
+          COGNITO_CLINET_SECRET: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
