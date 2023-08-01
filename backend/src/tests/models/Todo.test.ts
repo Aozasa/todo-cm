@@ -57,11 +57,6 @@ describe('create(Todo model)', () => {
           path: ['closedAt'],
         },
         {
-          code: 'invalid_date',
-          message: 'Invalid date',
-          path: ['finishedAt'],
-        },
-        {
           code: 'invalid_type',
           expected: 'string',
           message: 'Expected string, received number',

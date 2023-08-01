@@ -1,6 +1,7 @@
 import { cognito } from '../../lib/awsConfig';
 import User from '../../models/User';
 
+jest.mock('aws-jwt-verify');
 describe('create(User model)', () => {
   const { client } = cognito;
   test('createが成功したらユーザ情報を返す', async () => {

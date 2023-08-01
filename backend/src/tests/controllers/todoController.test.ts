@@ -3,8 +3,40 @@ import * as todoView from '../../views/todoView';
 import * as applicationView from '../../views/applicationView';
 import { createTodo, deleteTodo, updateTodo, listTodo } from '../../controllers/todoController';
 
+jest.mock('aws-jwt-verify');
+
 describe('createTodo(todo controller)', () => {
-  test('createが成功したらデータを返す', async () => {
+  test('createが成功したらデータを返す(adminユーザ)', async () => {
+    const mock = jest.spyOn(Todo, 'create');
+    mock.mockResolvedValue({
+      success: true,
+      res: {
+        todo: {},
+      },
+    } as any);
+    const viewMock = jest.spyOn(todoView, 'createTodoTemplate');
+    const response = { status: 200, token: 'token' };
+    viewMock.mockReturnValue(response as any);
+    const req = {
+      body: { username: 'username' },
+    };
+    const res = {
+      status: jest.fn((_: number) => {
+        return {
+          send: (res: any) => {
+            return res;
+          },
+        };
+      }),
+      locals: { user: { id: 'id', name: 'name', role: 'admin' } },
+    };
+    const result = await createTodo(req as any, res as any);
+
+    expect(result).toEqual(response);
+    expect(res.status.mock.calls[0][0]).toBe(200);
+  });
+
+  test('createが成功したらデータを返す(一般ユーザ)', async () => {
     const mock = jest.spyOn(Todo, 'create');
     mock.mockResolvedValue({
       success: true,
@@ -23,7 +55,7 @@ describe('createTodo(todo controller)', () => {
           },
         };
       }),
-      locals: { user: { id: 'id', name: 'name', role: 'role' } },
+      locals: { user: { id: 'id', name: 'name', role: 'general' } },
     };
     const result = await createTodo({} as any, res as any);
 

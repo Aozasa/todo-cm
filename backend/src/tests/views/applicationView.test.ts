@@ -8,11 +8,11 @@ import {
 
 describe('Application view', () => {
   test('internalServerErrorTemplateが正しい値を返す', async () => {
-    expect(internalServerErrorTemplate()).toEqual({ message: 'Internal server error.', status: 500 });
+    expect(internalServerErrorTemplate()).toEqual({ error: { message: 'Internal server error.' }, status: 500 });
   });
 
   test('unauthorizedErrorTemplateが正しい値を返す', async () => {
-    expect(unauthorizedErrorTemplate()).toEqual({ message: 'Unauthorized Error.', status: 401 });
+    expect(unauthorizedErrorTemplate()).toEqual({ error: { message: 'Unauthorized Error.' }, status: 401 });
   });
 
   test('zodParseErrorTemplateが正しい値を返す', async () => {

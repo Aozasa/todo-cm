@@ -2,6 +2,7 @@ import { verifyMiddleware } from '../../controllers/applicationController';
 import Session from '../../models/Session';
 import { unauthorizedErrorTemplate } from '../../views/applicationView';
 
+jest.mock('aws-jwt-verify');
 describe('verifyMiddleware(application controller)', () => {
   test('verifyMiddlewareが成功したら次のメソッドを呼び出す', async () => {
     const mock = jest.spyOn(Session, 'verify');

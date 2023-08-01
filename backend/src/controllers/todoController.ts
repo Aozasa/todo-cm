@@ -15,7 +15,15 @@ export const createTodo = async (req: express.Request, res: express.Response) =>
     if (!parsedCurrentUser.success) {
       return res.status(401).send(unauthorizedErrorTemplate());
     }
-    const createTodoResult = await Todo.create({ ...req.body, username: parsedCurrentUser.data.name });
+    let createTodoResult;
+    if (parsedCurrentUser.data.role == 'admin') {
+      createTodoResult = await Todo.create({
+        ...req.body,
+        username: req.body.username == null ? parsedCurrentUser.data.name : req.body.username,
+      });
+    } else {
+      createTodoResult = await Todo.create({ ...req.body, username: parsedCurrentUser.data.name });
+    }
     if (!createTodoResult.success) {
       if (createTodoResult.type == 'zod') {
         return res.status(400).send(zodParseErrorTemplate(createTodoResult.errors));

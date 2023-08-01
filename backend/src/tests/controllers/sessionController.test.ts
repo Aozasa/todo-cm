@@ -3,6 +3,8 @@ import * as sessionView from '../../views/sessionView';
 import * as applicationView from '../../views/applicationView';
 import { createSession, deleteSession, refreshTokenSession, verifySession } from '../../controllers/sessionController';
 
+jest.mock('aws-jwt-verify');
+
 describe('createSession(Session controller)', () => {
   test('loginが成功したらトークンを返す', async () => {
     const mock = jest.spyOn(Session, 'login');
