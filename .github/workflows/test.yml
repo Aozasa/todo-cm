@@ -23,3 +23,11 @@ jobs:
         working-directory: ./backend
       - run: npm test
         working-directory: ./backend
+        env:
+          DATABASE_URL: ""
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_REGION: ""
+          COGNITO_USER_POOL_ID: ""
+          COGNITO_CLINET_ID: ""
+          COGNITO_CLINET_SECRET: ""
